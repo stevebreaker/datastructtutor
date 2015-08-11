@@ -1,0 +1,54 @@
+<project default="jar">
+	<property name="build.dir" value="build"/>
+	<property name="build.classes.dir" value="build/classes"/>
+	<property name="build.lib.dir" value="build/lib"/>
+	<property name="build.log.dir" value="build/log" />
+	<property name="src.dir" value="src/java"/>
+	<property name="src.test.dir" value="${src.dir}/org/barksoft/datastructtutor/test"/>
+	<property name="lib.dir" value="${src.dir}/lib"/>
+	<property name="web.dir" value="web"/>
+	<property name="jar.dir" value="${build.dir}/jar"/>
+
+	<path id="classpath">
+		<fileset dir="${build.lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${build.lib.dir}" />
+		<copy todir="${build.lib.dir}" flatten="true">
+			<fileset dir="${lib.dir}">
+				<!--<include name="**/*.jar"/>-->
+			</fileset>
+		</copy>
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" 
+			classpathref="classpath"/>
+		<mkdir dir="${build.lib.dir}" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/datastructtutor.jar" basedir="${build.classes.dir}">
+		</jar>
+	</target>
+
+	<target name="junit" depends="jar">
+		<junit printsummary="yes" showoutput="yes" logfailedtests="yes">
+			<classpath>
+				<fileset dir="${jar.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<formatter type="plain" usefile="false" />
+			<batchtest>
+				<fileset dir="${src.test.dir}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+</project>
